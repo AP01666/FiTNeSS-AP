@@ -1,0 +1,10 @@
+{
+  "name": "AP SYSTEM",
+  "short_name": "AP SYSTEM",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#070a12",
+  "theme_color": "#080b14",
+  "description": "A personal hunter-style workout quest tracker",
+  "icons": []
+}

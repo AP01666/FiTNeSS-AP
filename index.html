@@ -1,0 +1,289 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b14">
+<title>AP FiTNESS</title>
+<link rel="manifest" href="manifest.json">
+<style>
+:root{color-scheme:dark;--bg:#070a12;--panel:#101726;--line:#26344c;--blue:#62d7ff;--muted:#8ea2bd;--white:#eef6ff;--green:#68f0b0;--gold:#ffcf70}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#132849,#080d18 50%,var(--bg));color:var(--white);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button{font:inherit;cursor:pointer;border:0}
+.app{max-width:720px;margin:auto;padding:12px 16px 100px}
+header,.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+header{padding:14px 0}
+.brand,.eyebrow{color:var(--blue);font-weight:900;letter-spacing:.16em}
+.brand span{color:white}
+h1{font-size:28px;margin:8px 0}
+h2{font-size:18px;margin:0 0 10px}
+p,.muted,.tiny{color:var(--muted)}
+.tiny{font-size:12px}
+.panel{background:linear-gradient(145deg,#142034,#0b111d);border:1px solid var(--line);border-radius:16px;padding:16px;margin:12px 0}
+.hero{background:linear-gradient(135deg,#102a49,#111729,#21183d)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+.stat{background:#050b15;border:1px solid #ffffff12;border-radius:10px;padding:10px}
+.stat strong{display:block;font-size:22px}
+.stat small{font-size:10px;color:var(--muted)}
+.progress{height:8px;background:#26354a;border-radius:20px;overflow:hidden;margin:10px 0}
+.progress div{height:100%;background:linear-gradient(90deg,#338dff,#62d7ff);width:0%}
+.btn{border-radius:10px;padding:11px 14px;font-weight:800;background:linear-gradient(100deg,#2d8bff,#62d7ff);color:#06101c}
+.secondary{background:#19263a;color:white;border:1px solid var(--line)}
+.full{width:100%}
+.btn:disabled{opacity:.4}
+.quest{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #ffffff12}
+.check{height:26px;width:26px;border-radius:8px;background:#0b1321;color:var(--blue);border:1px solid #3e5877}
+.check.done{background:#174e4c;color:var(--green)}
+.quest-name{font-weight:750}
+.quest-detail{font-size:12px;color:var(--muted)}
+.xp{font-size:11px;color:var(--gold)}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#070a12f5;border-top:1px solid #ffffff20;display:flex;justify-content:center;padding:10px;z-index:5}
+.nav button{flex:1;max-width:170px;padding:10px 4px;background:transparent;color:var(--muted);font-size:11px;border-radius:8px}
+.nav button.active{background:#142941;color:var(--blue)}
+.view{display:none}.view.active{display:block}
+.field{width:100%;background:#080e19;color:white;border:1px solid var(--line);border-radius:10px;padding:12px;margin:7px 0 12px}
+.login{max-width:420px;margin:10vh auto;padding:22px}
+.hidden{display:none!important}
+.notice{background:#ffcf7010;padding:10px;border-radius:8px;font-size:12px;color:#c6d1df}
+.item{padding:12px 0;border-bottom:1px solid #ffffff12}
+@media(min-width:600px){.app{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+
+<div id="loginScreen" class="panel login hidden">
+<div class="brand">AP <span>SYSTEM</span></div>
+<p class="eyebrow">HUNTER AUTHENTICATION</p>
+<h1>Enter the System.</h1>
+<p>Local demo profile. Do not use a real password.</p>
+<label>Email</label><input id="email" class="field" type="email" placeholder="you@example.com">
+<label>Demo password</label><input id="password" class="field" type="password" placeholder="At least 6 characters">
+<button id="loginBtn" class="btn full">Enter System</button>
+<p id="loginError" class="tiny"></p>
+</div>
+
+<div id="appScreen" class="app">
+<header><div class="brand">AP <span>SYSTEM</span></div><span id="dateChip" class="tiny">DAILY QUEST</span></header>
+
+<div class="view active" id="homeView">
+<section class="panel hero">
+<div class="row"><div><p class="eyebrow">HUNTER PROFILE</p><h1 id="hunterName">AP</h1><p id="rankLine">E-RANK HUNTER</p></div><strong id="rankBadge">E-RANK</strong></div>
+<div class="row"><span class="tiny">LEVEL <b id="level">1</b></span><b id="xpLabel">0 / 100 XP</b></div>
+<div class="progress"><div id="xpBar"></div></div>
+<div class="stats">
+<div class="stat"><strong id="streak">0</strong><small>STREAK</small></div>
+<div class="stat"><strong id="sessions">0</strong><small>SESSIONS</small></div>
+<div class="stat"><strong id="totalXp">0</strong><small>TOTAL XP</small></div>
+</div>
+</section>
+
+<h2>Today's Quest</h2>
+<section class="panel">
+<div class="eyebrow" id="dayLabel">DAY 1</div>
+<h2 id="workoutTitle">Awakening</h2><p id="workoutNote"></p>
+<div id="questList"></div>
+<div class="progress"><div id="questProgress"></div></div>
+<div class="row"><span id="questCount" class="tiny">0 / 4</span><span id="questXp" class="xp">0 XP</span></div>
+<button id="finishBtn" class="btn full" style="margin-top:12px" disabled>Complete Daily Quest</button>
+<p id="finishMsg" class="tiny"></p>
+</section>
+<section class="panel"><h2>System Notice</h2><p id="systemNotice">Consistency unlocks progression.</p></section>
+</div>
+
+<div class="view" id="bossView">
+<section class="panel hero">
+<div class="eyebrow">DUNGEON GATE</div><h1 id="bossTitle">Boss 1: The Awakening</h1>
+<p id="bossStatus">Clear both trials to claim your reward.</p>
+<div class="stats">
+<div class="stat"><strong id="bossNumber">1</strong><small>BOSS</small></div>
+<div class="stat"><strong id="bossWins">0</strong><small>VICTORIES</small></div>
+<div class="stat"><strong>300</strong><small>XP REWARD</small></div>
+</div>
+</section>
+<section class="panel">
+<div class="eyebrow">STAGE 1</div><h2>Strength Trial</h2>
+<p>Complete the listed exercises. Use controlled reps and a weight you can safely handle.</p>
+<div id="strengthList"></div>
+<button id="strengthBtn" class="btn full">Complete Strength Stage</button>
+<p id="strengthMsg" class="tiny"></p>
+</section>
+<section class="panel">
+<div class="eyebrow">STAGE 2</div><h2>Speed Trial</h2>
+<p>Warm up with a 5-minute brisk walk. Then complete six rounds of 20 seconds of fast running followed by 80 seconds of walking. Finish with a 5-minute easy walk.</p>
+<div id="runList"></div>
+<button id="runBtn" class="btn full" disabled>Complete Running Stage</button>
+<p id="runMsg" class="tiny">Clear Stage 1 to unlock this stage.</p>
+</section>
+<section class="panel"><h2>Boss Rules</h2><p>Only claim a stage after actually completing it. Stop if you feel pain, dizziness, chest pain, or unusual shortness of breath. Rest between difficult strength sessions.</p></section>
+</div>
+
+<div class="view" id="historyView">
+<section class="panel"><h1>Quest History</h1>
+<div class="stats">
+<div class="stat"><strong id="histSessions">0</strong><small>SESSIONS</small></div>
+<div class="stat"><strong id="histExercises">0</strong><small>TASKS</small></div>
+<div class="stat"><strong id="histBest">0</strong><small>BEST STREAK</small></div>
+</div>
+<div id="historyList"></div>
+<button id="exportBtn" class="btn secondary full">Export Progress</button>
+</section>
+</div>
+
+<div class="view" id="statsView">
+<section class="panel"><h1>Hunter Status</h1>
+<div class="item">Strength <strong id="strStat">1</strong><div class="progress"><div id="strBar"></div></div></div>
+<div class="item">Endurance <strong id="endStat">1</strong><div class="progress"><div id="endBar"></div></div></div>
+<div class="item">Consistency <strong id="conStat">1</strong><div class="progress"><div id="conBar"></div></div></div>
+</section>
+<section class="panel"><h2>Account & Data</h2><p id="accountLabel"></p><p class="tiny">Progress is stored in this browser on this device.</p>
+<button id="logoutBtn" class="btn secondary full">Switch Profile</button>
+<button id="resetBtn" class="btn secondary full" style="margin-top:8px">Reset Progress</button>
+<p id="accountMsg" class="tiny"></p>
+</section>
+</div>
+</div>
+
+<nav class="nav">
+<button class="active" data-view="homeView">⚔️<br>QUEST</button>
+<button data-view="bossView">👹<br>BOSS GATE</button>
+<button data-view="historyView">▤<br>HISTORY</button>
+<button data-view="statsView">◈<br>STATUS</button>
+</nav>
+
+<script>
+const $=id=>document.getElementById(id);
+const STORE='ap-system-v1';
+const DAY=86400000;
+
+const workouts=[
+{title:'Chest Awakening',type:'STRENGTH',label:'CHEST',note:'Controlled reps. Keep your form clean.',items:[['Push-ups','2 sets × 6–10 reps'],['Dumbbell floor press','2 sets × 8–12 reps'],['Push-ups','1 set × 6–10 reps'],['Dumbbell floor press','1 set × 8–12 reps']]},
+{title:'Arm Development',type:'STRENGTH',label:'ARMS',note:'Move slowly. Avoid swinging the weights.',items:[['Dumbbell curls','2 sets × 10–12 reps'],['Hammer curls','2 sets × 10–12 reps'],['Overhead dumbbell triceps extensions','2 sets × 8–12 reps'],['Dumbbell curls','1 set × 10 reps']]},
+{title:'Shoulder Forge',type:'STRENGTH',label:'SHOULDERS',note:'Use a weight you can control safely.',items:[['Dumbbell shoulder press','2 sets × 8–10 reps'],['Lateral raises','2 sets × 10–12 reps'],['Reverse fly','2 sets × 10–12 reps'],['Dumbbell shoulder press','1 set × 8 reps']]},
+{title:'Back Awakening',type:'STRENGTH',label:'BACK',note:'Keep your back stable and movements controlled.',items:[['One-arm dumbbell rows','2 sets × 10 each side'],['Bent-over dumbbell rows','2 sets × 10 reps'],['One-arm dumbbell rows','1 set × 10 each side'],['Bent-over dumbbell rows','1 set × 10 reps']]},
+{title:'Leg Day: The Trial',type:'STRENGTH',label:'LEGS',note:'Squats only. Stop if you feel pain.',items:[['Bodyweight squats','2 sets × 10–12 reps'],['Bodyweight squats','2 sets × 10–12 reps'],['Bodyweight squats','1 set × 10 reps'],['Bodyweight squats','1 set × 10 reps']]}
+];
+
+const bossExercises=[
+['Push-ups','2 sets × 8 reps'],
+['Dumbbell floor press','2 sets × 10 reps'],
+['Dumbbell curls','2 sets × 10 reps'],
+['Dumbbell shoulder press','2 sets × 8 reps'],
+['One-arm dumbbell rows','2 sets × 10 each side'],
+['Bodyweight squats','2 sets × 12 reps']
+];
+
+let state,userKey='';
+
+function today(){return new Date().toLocaleDateString('en-CA')}
+function blank(email){return {email,created:today(),xp:0,level:1,streak:0,bestStreak:0,lastSession:null,sessions:0,history:[],completed:{},progression:0,stats:{str:1,end:1,con:1},boss:{number:1,wins:0,strengthDone:false,runDone:false,claimed:false}}}
+function load(){try{let s=JSON.parse(localStorage.getItem(STORE+'-'+userKey));if(!s)return blank(userKey);s.boss=s.boss||{number:1,wins:0,strengthDone:false,runDone:false,claimed:false};s.stats=s.stats||{str:1,end:1,con:1};s.history=s.history||[];s.completed=s.completed||{};return s}catch{return blank(userKey)}}
+function save(){localStorage.setItem(STORE+'-'+userKey,JSON.stringify(state))}
+function dayIndex(){let a=new Date(state.created+'T12:00:00').getTime(),b=new Date(today()+'T12:00:00').getTime();return Math.max(0,Math.floor((b-a)/DAY))}
+function workoutIndex(){return dayIndex()%workouts.length}
+function workout(){let w=JSON.parse(JSON.stringify(workouts[workoutIndex()]));if(state.progression>=1)w.note+=' Progression tier '+state.progression+'.';return w}
+function currentDone(){return state.completed[today()]||[]}
+function rank(){return state.level>=25?'S-RANK':state.level>=15?'A-RANK':state.level>=10?'B-RANK':state.level>=6?'C-RANK':state.level>=3?'D-RANK':'E-RANK'}
+
+function render(){
+let w=workout(),done=currentDone(),earned=done.length*25;
+$('dateChip').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+$('hunterName').textContent=(state.email.split('@')[0]||'AP').slice(0,18).toUpperCase();
+$('rankBadge').textContent=rank();$('rankLine').textContent=rank()+' HUNTER · COMEBACK ARC';
+$('level').textContent=state.level;$('xpLabel').textContent=(state.xp%100)+' / 100 XP';$('xpBar').style.width=(state.xp%100)+'%';
+$('streak').textContent=state.streak;$('sessions').textContent=state.sessions;$('totalXp').textContent=state.xp;
+$('todayType').textContent=w.type;
+$('dayLabel').textContent='DAY '+(dayIndex()+1)+' · '+w.label;
+$('workoutTitle').textContent=w.title;$('workoutNote').textContent=w.note;
+$('questList').innerHTML=w.items.map((it,i)=>`<div class="quest"><button class="check ${done.includes(i)?'done':''}" data-quest="${i}">${done.includes(i)?'✓':''}</button><div><div class="quest-name">${it[0]}</div><div class="quest-detail">${it[1]}</div></div><span class="xp">+25 XP</span></div>`).join('');
+$('questCount').textContent=done.length+' / '+w.items.length+' complete';$('questXp').textContent='+'+earned+' XP earned';$('questProgress').style.width=(done.length/w.items.length*100)+'%';
+let already=state.history.some(h=>h.date===today());
+$('finishBtn').disabled=done.length!==w.items.length||already;
+$('finishBtn').textContent=already?'Daily Quest Completed':'Complete Daily Quest';
+$('finishMsg').textContent=already?'Quest logged. Recovery is part of the system.':done.length===w.items.length?'All tasks cleared. Claim your XP.':'Complete every task to clear the quest.';
+$('systemNotice').textContent='Complete quests consistently. Increase difficulty gradually and keep good technique.';
+$('histSessions').textContent=state.sessions;$('histExercises').textContent=state.history.reduce((s,h)=>s+(h.exerciseCount||0),0);$('histBest').textContent=state.bestStreak;
+$('historyList').innerHTML=state.history.length?state.history.slice().reverse().map(h=>`<div class="item"><div class="row"><strong>${h.title}</strong><span class="xp">+${h.xp} XP</span></div><p class="tiny">${h.date} · ${h.exerciseCount} tasks · Level ${h.level}</p></div>`).join(''):'<p class="muted">No completed quests yet.</p>';
+$('strStat').textContent=state.stats.str;$('endStat').textContent=state.stats.end;$('conStat').textContent=state.stats.con;
+$('strBar').style.width=Math.min(100,state.stats.str*10)+'%';$('endBar').style.width=Math.min(100,state.stats.end*10)+'%';$('conBar').style.width=Math.min(100,state.stats.con*10)+'%';
+$('accountLabel').textContent='Local demo profile: '+state.email;
+renderBoss();
+document.querySelectorAll('[data-quest]').forEach(b=>b.addEventListener('click',()=>toggle(+b.dataset.quest)));
+}
+
+function toggle(i){let d=currentDone();d=d.includes(i)?d.filter(x=>x!==i):[...d,i];state.completed[today()]=d;save();render()}
+
+function complete(){
+if(state.history.some(h=>h.date===today()))return;
+let w=workout(),done=currentDone();if(done.length!==w.items.length)return;
+let prev=state.lastSession?Math.round((new Date(today()+'T12:00:00')-new Date(state.lastSession+'T12:00:00'))/DAY):null;
+state.streak=prev===1?state.streak+1:1;state.bestStreak=Math.max(state.bestStreak,state.streak);
+state.xp+=100;state.sessions++;state.lastSession=today();state.stats.con++;
+state.stats.str++;
+state.level=Math.floor(state.xp/100)+1;
+state.history.push({date:today(),title:w.title,xp:100,exerciseCount:done.length,level:state.level});
+let cutoff=new Date(Date.now()-7*DAY).toLocaleDateString('en-CA');
+let recent=state.history.filter(h=>h.date>=cutoff).length;
+if(recent>=3&&dayIndex()>=6&&state.progression<3)state.progression++;
+save();render();
+$('finishMsg').textContent='Quest cleared! +100 XP. Keep your recovery days.';
+}
+
+function renderBoss(){
+let b=state.boss;
+$('bossTitle').textContent='Boss '+b.number+': '+(['The Awakening','Iron Guardian','Shadow Beast','Dungeon King'][Math.min(b.number-1,3)]);
+$('bossNumber').textContent=b.number;$('bossWins').textContent=b.wins;
+$('bossStatus').textContent=b.claimed?'Boss defeated. The next gate awaits.':'Clear both trials to claim 300 XP.';
+$('strengthList').innerHTML=bossExercises.map(x=>'<div class="item"><strong>'+x[0]+'</strong><p class="tiny">'+x[1]+'</p></div>').join('');
+$('strengthBtn').disabled=b.strengthDone||b.claimed;
+$('strengthBtn').textContent=b.strengthDone?'Strength Stage Cleared':'Complete Strength Stage';
+$('strengthMsg').textContent=b.strengthDone?'Strength trial recorded.':'Complete the strength exercises before claiming this stage.';
+$('runBtn').disabled=!b.strengthDone||b.runDone||b.claimed;
+$('runBtn').textContent=b.runDone?'Running Stage Cleared':'Complete Running Stage';
+$('runMsg').textContent=!b.strengthDone?'Clear Stage 1 to unlock Stage 2.':b.runDone?'Running trial recorded.':'Complete the warm-up, six run/walk rounds and cooldown first.';
+}
+
+function strengthComplete(){
+if(state.boss.strengthDone||state.boss.claimed)return;
+if(!confirm('Only confirm after completing the strength trial safely. Mark Stage 1 complete?'))return;
+state.boss.strengthDone=true;save();render();
+}
+function runningComplete(){
+let b=state.boss;if(!b.strengthDone||b.runDone||b.claimed)return;
+if(!confirm('Only confirm after completing the full running trial, including warm-up and cooldown. Mark Stage 2 complete?'))return;
+b.runDone=true;
+b.claimed=true;b.wins++;state.xp+=300;state.level=Math.floor(state.xp/100)+1;state.stats.str++;state.stats.end++;state.stats.con++;
+state.history.push({date:today(),title:'Boss '+b.number+' defeated',xp:300,exerciseCount:bossExercises.length,level:state.level});
+save();render();
+$('bossStatus').textContent='VICTORY! +300 XP earned. Next boss unlocked.';
+}
+function nextBoss(){
+let b=state.boss;b.number++;b.strengthDone=false;b.runDone=false;b.claimed=false;save();render();
+}
+
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>{
+document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));
+document.querySelectorAll('.view').forEach(x=>x.classList.toggle('active',x.id===b.dataset.view));
+}));
+$('finishBtn').addEventListener('click',complete);
+$('strengthBtn').addEventListener('click',strengthComplete);
+$('runBtn').addEventListener('click',runningComplete);
+$('exportBtn').addEventListener('click',()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ap-system-progress.json';a.click();URL.revokeObjectURL(a.href)});
+$('loginBtn').addEventListener('click',()=>{
+let email=$('email').value.trim().toLowerCase(),pass=$('password').value;
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||pass.length<6){$('loginError').textContent='Enter a valid email and at least 6 characters.';return}
+userKey=email;localStorage.setItem('ap-system-active',userKey);state=load();
+$('loginScreen').classList.add('hidden');$('appScreen').classList.remove('hidden');save();render();
+});
+$('logoutBtn').addEventListener('click',()=>{localStorage.removeItem('ap-system-active');userKey='';state=null;$('appScreen').classList.add('hidden');$('loginScreen').classList.remove('hidden');$('email').value='';$('password').value=''});
+$('resetBtn').addEventListener('click',()=>{if(confirm('Reset all progress? This cannot be undone.')){state=blank(userKey);save();render();$('accountMsg').textContent='Progress reset.'}});
+
+userKey=localStorage.getItem('ap-system-active')||'';
+if(userKey){state=load();$('appScreen').classList.remove('hidden');$('loginScreen').classList.add('hidden');render()}
+else{$('appScreen').classList.add('hidden');$('loginScreen').classList.remove('hidden')}
+
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
